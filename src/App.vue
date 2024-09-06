@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import ChatToolbar from './components/ChatToolbar.vue';
+import ChatWindow from './components/ChatWindow.vue';
+import ChatInput from './components/ChatInput.vue';
+import { ref } from 'vue';
+import { IMessage } from './interfaces';
+
+const messages = ref<IMessage[]>([])
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="bg-gray-100 h-screen flex flex-col max-w-lg mx-auto">
+    <ChatToolbar />
+    <ChatWindow :messages="messages" />
+    <ChatInput />
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
