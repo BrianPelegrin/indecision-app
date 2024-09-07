@@ -1,19 +1,77 @@
 <script setup lang="ts">
+import { reactive, ref } from 'vue';
 import ChatToolbar from './components/ChatToolbar.vue';
 import ChatWindow from './components/ChatWindow.vue';
 import ChatInput from './components/ChatInput.vue';
-import { ref } from 'vue';
-import { IMessage } from './interfaces';
+import TheModal from './components/TheModal.vue';
+import { IAppConfig, IMessage } from './interfaces';
+import AppearanceForm from './components/AppearanceForm.vue';
 
-const messages = ref<IMessage[]>([])
+const messages = ref<IMessage[]>([]);
+const showProfileModal = ref<boolean>(false);
+const showAppearanceModal = ref<boolean>(false);
+const profileImage = ref<string>('/img/user-thumbnail.png');
+const appearance = reactive<IAppConfig>({
+  appColor:'#3fb884',
+  messageColor:'#82e0b5',
+  contactMessageColor:'#D1D5DB'
+})
 </script>
 
 <template>
   <div class="bg-gray-100 h-screen flex flex-col max-w-lg mx-auto">
-    <ChatToolbar />
-    <ChatWindow :messages="messages" />
-    <ChatInput />
+    <ChatToolbar
+      @click-profile="showProfileModal = true"
+      @click-appearance="showAppearanceModal = true"
+      :toolbar-color="appearance.appColor"
+      title="La novia del pana mio ❤"
+    />
+    <ChatWindow 
+      :profileImage="profileImage"
+      :messages="messages"
+      :message-color="appearance.messageColor"
+      :contact-message-color="appearance.contactMessageColor"      
+    />
+    <ChatInput
+      :send-button-color="appearance.appColor" 
+    />
   </div>
+  <!-- MODALS -->
+  <TheModal v-model="showProfileModal" @click-backdrop="showProfileModal = false">
+    <div class="bg-white rounded-md p-5 flex flex-wrap w-2/4 shadow-lg" >
+      <div class="m-3" v-for="img in 15">
+        <img 
+          @click="()=>{
+            profileImage = `https://randomuser.me/api/portraits/men/${img}.jpg`
+            showProfileModal = false
+          } " 
+          :src="`https://randomuser.me/api/portraits/men/${img}.jpg`" 
+          :alt="`img-${img}`" 
+          class="rounded-full hover:cursor-pointer" 
+        />
+      </div>
+      <div class="block w-full mt-5">
+        <button 
+        @click="showProfileModal = false" 
+        type="button" 
+        class="font-semibold border p-2 rounded-md focus:ring-2 ring-slate-300 "
+        > 
+          Cancelar 
+        </button>            
+      </div>      
+    </div>
+  </TheModal>
+  <TheModal v-model="showAppearanceModal" @click-backdrop="showAppearanceModal = false">
+    <div class="bg-white rounded-md p-5 w-80 shadow-lg ">
+      <AppearanceForm
+        @submit-appearance="(appAppearance)=>{
+          appearance = appAppearance
+          showAppearanceModal = false
+        }" 
+        @cancel="showAppearanceModal = false"
+      />
+    </div>
+  </TheModal>
 </template>
 
 <style scoped>
