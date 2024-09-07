@@ -1,15 +1,39 @@
 <script setup lang="ts">
+import { reactive } from 'vue';
+import { IMessage } from '../interfaces';
+import { getId } from '../helpers/identifiers';
+
 interface IProps{
     sendButtonColor:string
 }
+interface IEmits{
+    (event:'submit-message', args:IMessage):void
+}
 
-defineProps<IProps>()
+defineProps<IProps>();
+const emits = defineEmits<IEmits>();
+
+const message = reactive<IMessage>({
+    id:'',
+    isOwnMessage:true,
+    message:''
+})
+
+const onSubmitMessage = ()=> {
+
+    if(!message.message) return;
+
+    message.id = getId();
+    emits('submit-message', {...message});
+    message.message = ''
+}
 
 </script>
 
 <template>
-    <form @submit.prevent="" class="bg-white p-4 flex items-center">
+    <form @submit.prevent="onSubmitMessage" class="bg-white p-4 flex items-center">
         <input 
+            v-model="message.message"
             type="text" 
             placeholder="Type your message..." 
             class="flex-1 border rounded-full px-4 py-2 focus:outline-none "

@@ -4,10 +4,33 @@ import ChatToolbar from './components/ChatToolbar.vue';
 import ChatWindow from './components/ChatWindow.vue';
 import ChatInput from './components/ChatInput.vue';
 import TheModal from './components/TheModal.vue';
-import { IAppConfig, IMessage } from './interfaces';
 import AppearanceForm from './components/AppearanceForm.vue';
+import { IAppConfig, IMessage } from './interfaces';
+import { getId } from './helpers/identifiers';
 
-const messages = ref<IMessage[]>([]);
+const messages = ref<IMessage[]>([
+  {
+    isOwnMessage:true,
+    id:getId(),
+    message:"Singamos?",    
+  },
+  {
+    isOwnMessage:false,
+    id:getId(),
+    message:"Si, Cuando podemos?",
+    imgSrc:'https://yesno.wtf/assets/yes/11-a23cbde4ae018bbda812d2d8b2b8fc6c.gif'
+  },
+  {
+    isOwnMessage:true,
+    id:getId(),
+    message:"Mañana a las 6",    
+  },
+  {
+    isOwnMessage:false,
+    id:getId(),
+    message:"Ok",
+  },
+]);
 const showProfileModal = ref<boolean>(false);
 const showAppearanceModal = ref<boolean>(false);
 const profileImage = ref<string>('/img/user-thumbnail.png');
@@ -33,7 +56,8 @@ const appearance = reactive<IAppConfig>({
       :contact-message-color="appearance.contactMessageColor"      
     />
     <ChatInput
-      :send-button-color="appearance.appColor" 
+      @submit-message="messages.push($event)"  
+      :send-button-color="appearance.appColor"
     />
   </div>
   <!-- MODALS -->

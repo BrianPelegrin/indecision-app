@@ -2,7 +2,7 @@
 import type { IMessage } from "../interfaces/index"
 interface IProps{
     messages:IMessage[];
-    profileImage?:string;
+    profileImage:string;
     messageColor:string;
     contactMessageColor:string;
 }
@@ -12,39 +12,47 @@ const contactImage = `https://randomuser.me/api/portraits/women/${Math.floor(Mat
 </script>
 
 <template>
-<div class="flex-1 overflow-y-auto p-2">    
+    <div class="flex-1 overflow-y-auto p-2">    
         <div class="flex flex-col space-y-2">
-            <!-- Messages go here -->
-            <!-- Example Message -->
-            <div class="flex justify-end items-center " >
-                <div 
-                  class="text-black p-2 rounded-lg max-w-xs shadow-md" 
-                  :style="{
-                    backgroundColor:messageColor
-                  }"
-                >
-                    Hey, how's your day going?
-                </div>            
-                <div>
-                    <img :src="profileImage" alt="contact-image" class="rounded-full ms-1 shadow-md" width="50" />
+            <template v-for="message in messages" :key="message.id">
+
+                <div v-if="message.isOwnMessage" :id="message.id" class="flex items-center justify-end">             
+                    <div 
+                      class="text-black p-2 rounded-lg max-w-xs shadow-md" 
+                      :style="{backgroundColor:messageColor}"
+                    >
+                        <img v-if="message.imgSrc" :src="message.imgSrc" :alt="message.id" width="100" />
+                        <span>{{ message.message }}</span>
+                    </div>            
+                    <div class="ms-1">
+                        <img 
+                            :src="profileImage" 
+                            alt="contact-image" 
+                            class="rounded-full shadow-md" 
+                            width="50" 
+                        />
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Example Received Message -->
-            <div class="flex justify-start items-center">
-                <div>
-                    <img :src="contactImage" alt="contact-image" class="rounded-full me-1 shadow-md" width="50" />
+                
+                <div v-else :id="message.id" class="flex items-center justify-start">   
+                    <div class="me-1">
+                        <img 
+                            :src="contactImage" 
+                            alt="contact-image" 
+                            class="rounded-full shadow-md" 
+                            width="50" 
+                        />
+                    </div>             
+                    <div 
+                      class="text-black p-2 rounded-lg max-w-xs shadow-md" 
+                      :style="{backgroundColor:contactMessageColor}"
+                    >
+                        <img v-if="message.imgSrc" :src="message.imgSrc" :alt="message.id" width="200" class=" object-cover rounded-md mb-2" />
+                        <span>{{ message.message }}</span>
+                    </div>
                 </div>
-                <div 
-                  class="bg-gray-300 text-black p-2 rounded-lg max-w-xs shadow-md"
-                  :style="{
-                    backgroundColor:contactMessageColor
-                  }" 
-                >
-                    Not too bad, just a bit busy. How about you?
-                </div>
-            </div>
-            
+
+            </template>
         </div>
     </div>
 </template>

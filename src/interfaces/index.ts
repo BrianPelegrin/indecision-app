@@ -3,6 +3,7 @@ interface IMessage{
     id:string;
     isOwnMessage:boolean;
     message:string;
+    imgSrc?:string;
 }
 
 interface IAppConfig{
