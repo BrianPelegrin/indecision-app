@@ -5,32 +5,11 @@ import ChatWindow from './components/ChatWindow.vue';
 import ChatInput from './components/ChatInput.vue';
 import TheModal from './components/TheModal.vue';
 import AppearanceForm from './components/AppearanceForm.vue';
-import { IAppConfig, IMessage } from './interfaces';
+import { IAppConfig, IMessage, IAnswer } from './interfaces';
 import { getId } from './helpers/identifiers';
+//import { getId } from './helpers/identifiers';
 
-const messages = ref<IMessage[]>([
-  {
-    isOwnMessage:true,
-    id:getId(),
-    message:"Singamos?",    
-  },
-  {
-    isOwnMessage:false,
-    id:getId(),
-    message:"Si, Cuando podemos?",
-    imgSrc:'https://yesno.wtf/assets/yes/11-a23cbde4ae018bbda812d2d8b2b8fc6c.gif'
-  },
-  {
-    isOwnMessage:true,
-    id:getId(),
-    message:"Mañana a las 6",    
-  },
-  {
-    isOwnMessage:false,
-    id:getId(),
-    message:"Ok",
-  },
-]);
+const messages = ref<IMessage[]>([]);
 const showProfileModal = ref<boolean>(false);
 const showAppearanceModal = ref<boolean>(false);
 const profileImage = ref<string>('/img/user-thumbnail.png');
@@ -39,6 +18,28 @@ const appearance = reactive<IAppConfig>({
   messageColor:'#82e0b5',
   contactMessageColor:'#D1D5DB'
 })
+
+const getResponse = async (): Promise<IAnswer> =>{
+  const response = await fetch('https://yesno.wtf/api')
+  return  await response.json() as IAnswer
+}
+
+const onSubmitMessage = async (message:IMessage): Promise<void> =>{
+  messages.value.push({...message})
+  if(!message.message.endsWith('?')) return;
+
+  const answer =  await getResponse()
+
+  setTimeout(() => {    
+    messages.value.push({
+      id: getId(),
+      isOwnMessage: false,
+      message: answer.answer,
+      imgSrc: answer.image
+    })
+  }, 500);
+  
+}
 </script>
 
 <template>
@@ -56,7 +57,7 @@ const appearance = reactive<IAppConfig>({
       :contact-message-color="appearance.contactMessageColor"      
     />
     <ChatInput
-      @submit-message="messages.push($event)"  
+      @submit-message="onSubmitMessage"  
       :send-button-color="appearance.appColor"
     />
   </div>

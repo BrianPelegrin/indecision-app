@@ -6,6 +6,12 @@ interface IMessage{
     imgSrc?:string;
 }
 
+interface IAnswer{
+    answer:string;
+    forced:boolean;
+    image:string;
+}
+
 interface IAppConfig{
     appColor:string;
     messageColor:string;
@@ -17,4 +23,5 @@ interface IAppConfig{
 export type {
     IMessage,
     IAppConfig,
+    IAnswer
 }

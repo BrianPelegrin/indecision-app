@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import type { IMessage } from "../interfaces/index"
 interface IProps{
     messages:IMessage[];
@@ -6,13 +7,28 @@ interface IProps{
     messageColor:string;
     contactMessageColor:string;
 }
-defineProps<IProps>()
-
+const props = defineProps<IProps>()
+const chatRef = ref<HTMLDivElement | null>();
 const contactImage = `https://randomuser.me/api/portraits/women/${Math.floor(Math.random() * 50)}.jpg`
+
+watch(props,()=>{
+    console.log('DEBIO SCROLLEAR');
+    
+    setTimeout(()=>{
+        chatRef.value?.scrollTo({
+            top: chatRef.value.scrollHeight,
+            behavior:'smooth'
+        })
+
+    },600)
+},
+{
+    deep:true
+})
 </script>
 
 <template>
-    <div class="flex-1 overflow-y-auto p-2">    
+    <div ref="chatRef" class="flex-1 overflow-y-auto p-2">    
         <div class="flex flex-col space-y-2">
             <template v-for="message in messages" :key="message.id">
 
@@ -22,7 +38,7 @@ const contactImage = `https://randomuser.me/api/portraits/women/${Math.floor(Mat
                       :style="{backgroundColor:messageColor}"
                     >
                         <img v-if="message.imgSrc" :src="message.imgSrc" :alt="message.id" width="100" />
-                        <span>{{ message.message }}</span>
+                        <span class="capitalize">{{ message.message }}</span>
                     </div>            
                     <div class="ms-1">
                         <img 
@@ -48,7 +64,7 @@ const contactImage = `https://randomuser.me/api/portraits/women/${Math.floor(Mat
                       :style="{backgroundColor:contactMessageColor}"
                     >
                         <img v-if="message.imgSrc" :src="message.imgSrc" :alt="message.id" width="200" class=" object-cover rounded-md mb-2" />
-                        <span>{{ message.message }}</span>
+                        <span class="capitalize">{{ message.message }}</span>
                     </div>
                 </div>
 
